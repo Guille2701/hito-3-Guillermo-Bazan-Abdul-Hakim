@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=0.0.0.0
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - NODE_ENV=production
+      - WEBHOOK_URL=http://localhost:5678/
+      - GENERIC_TIMEZONE=${TIMEZONE:-Europe/Madrid}
+      # Nota: Hemos quitado la configuración de Postgres interna de n8n para
+      # asegurar que no pierdas tus credenciales y workflows existentes,
+      # los cuales están guardados en tu base de datos SQLite actual.
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./../n8n/workflows:/home/node/.n8n/workflows
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-n8n_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-root}
+      - POSTGRES_DB=${POSTGRES_DB:-automatizacion_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./../postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+
+volumes:
+  n8n_data:
+    external: true
+  qdrant_storage:
+    external: true
+  postgres_data:
+  ollama_data:
