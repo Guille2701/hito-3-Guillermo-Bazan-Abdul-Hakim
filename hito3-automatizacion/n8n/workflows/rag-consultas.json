@@ -1,0 +1,264 @@
+{
+  "name": "consultas RAG",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9a4d2c8f-e3c8-48cc-b98d-0466db8d3e31",
+      "name": "When chat message received",
+      "webhookId": "9fb824b3-641a-40d7-b241-5d2b30454796"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Responde siempre en español. Utiliza la información de las herramientas para dar respuestas precisas basadas en los documentos cargados."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "5ff7b4d8-52c2-4970-beaf-3d5895aeaa28",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "mistral:instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        144,
+        208
+      ],
+      "id": "3d3f93c9-ba54-4b47-8ce4-aeecd9aad18a",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "XFDHqbOdPU9cx52k",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Usa esta herramienta para responder preguntas basadas en los documentos educativos almacenados en la base de datos. Envía la consulta del usuario aquí.",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "rag-ingesta",
+          "mode": "list",
+          "cachedResultName": "rag-ingesta"
+        },
+        "topK": 6,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        320,
+        224
+      ],
+      "id": "6b2c679c-59d4-40df-a6a1-e2436ec4f46a",
+      "name": "Qdrant Vector Store",
+      "credentials": {
+        "qdrantApi": {
+          "id": "QRPb7Z2dQ4rSVUeh",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "nomic-embed-text:latest"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        320,
+        384
+      ],
+      "id": "7f4c358e-4a0e-4dd2-a4af-5542eb5eef3f",
+      "name": "Embeddings Ollama",
+      "credentials": {
+        "ollamaApi": {
+          "id": "XFDHqbOdPU9cx52k",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "consultas_rag",
+          "mode": "list",
+          "cachedResultName": "consultas_rag"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "pregunta": "={{ $node[\"When chat message received\"].json.chatInput }}",
+            "respuesta": "={{ $node[\"AI Agent\"].json.output }}",
+            "documentos_usados": "={{ [\"Qdrant RAG\"] }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "pregunta",
+              "displayName": "pregunta",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "respuesta",
+              "displayName": "respuesta",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "documentos_usados",
+              "displayName": "documentos_usados",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "array",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        560,
+        0
+      ],
+      "id": "96e63f1a-835d-4640-9d41-18161b1c7146",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "dAbhJodJkxWwoBfZ",
+          "name": "Postgres account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qdrant Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Ollama": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "545be575-8994-45d9-9d75-bf8c9b0457f6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f3a872dce7a49585175aa952617c150558e095bcf3394dae36ee999bce25f73b"
+  },
+  "id": "h8N6jZFSVz8NDBUo",
+  "tags": []
+}
