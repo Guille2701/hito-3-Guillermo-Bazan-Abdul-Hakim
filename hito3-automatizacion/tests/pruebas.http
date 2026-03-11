@@ -7,3 +7,56 @@ Content-Type: application/pdf
 
 < ./test_rag.pdf
 --boundary--
+
+
+### ==============================================================
+### TESTS: PROYECTO B - CHATBOT MULTIHERRAMIENTA
+### ==============================================================
+
+### 1. Prueba de intención: CLIMA (API OpenMeteo)
+POST http://localhost:5678/webhook-test/chatbot
+Content-Type: application/json
+
+{
+  "mensaje": "¿Qué tiempo va a hacer mañana en Madrid?"
+}
+
+### --------------------------------------------------------------
+
+### 2. Prueba de intención: PAÍSES (API REST Countries)
+POST http://localhost:5678/webhook-test/chatbot
+Content-Type: application/json
+
+{
+  "mensaje": "Dime cuál es la capital de España y cuánta población tiene."
+}
+
+### --------------------------------------------------------------
+
+### 3. Prueba de intención: WIKIPEDIA (API Wikipedia)
+POST http://localhost:5678/webhook-test/chatbot
+Content-Type: application/json
+
+{
+  "mensaje": "¿Qué es la Torre Eiffel y dónde está?"
+}
+
+### --------------------------------------------------------------
+
+### 4. Prueba de intención: CHISTES (JokeAPI)
+POST http://localhost:5678/webhook-test/chatbot
+Content-Type: application/json
+
+{
+  "mensaje": "Cuéntame un chiste gracioso sobre programadores."
+}
+
+### --------------------------------------------------------------
+
+### 5. Prueba de intención: GENERAL (Fallback directo a Ollama)
+POST http://localhost:5678/webhook-test/chatbot
+Content-Type: application/json
+
+{
+  "mensaje": "¡Hola! Muy buenos días. ¿Qué tal estás hoy?"
+}
