@@ -1,0 +1,14 @@
+PROYECTO: SISTEMA DE MONITORIZACIÓN ALICANTE
+============================================
+
+ID DE SISTEMA: ALC-9988-X
+RESPONSABLE: Guillermo Bazán
+ESTADO: Operativo
+
+NOTAS TÉCNICAS ADICIONALES:
+1. El protocolo de comunicación utilizado para el envío de logs es MQTT.
+2. En caso de fallo crítico, el botón de reinicio manual se encuentra en la parte posterior del rack, etiquetado con el color NARANJA.
+3. El horario de mantenimiento preventivo es todos los lunes a las 03:00 AM.
+4. La contraseña temporal de administración para el nivel 2 es: ADMIN-SECURE-2026.
+
+FIN DEL DOCUMENTO

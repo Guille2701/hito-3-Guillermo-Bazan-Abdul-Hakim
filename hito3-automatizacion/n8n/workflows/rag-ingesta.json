@@ -9,8 +9,8 @@
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1.1,
       "position": [
-        224,
-        0
+        608,
+        -336
       ],
       "id": "976fc9b7-9496-4032-8a85-5985d25cbdf8",
       "name": "Extract from File"
@@ -46,8 +46,8 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
       "typeVersion": 1.3,
       "position": [
-        480,
-        0
+        752,
+        -336
       ],
       "id": "b1f7db03-ede3-4f4d-8ff5-b2b932df7704",
       "name": "Qdrant Vector Store",
@@ -66,8 +66,8 @@
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1.1,
       "position": [
-        576,
-        224
+        688,
+        -112
       ],
       "id": "56be4908-8499-4728-a34f-74ef34335ae7",
       "name": "Default Data Loader"
@@ -80,8 +80,8 @@
       "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
       "typeVersion": 1,
       "position": [
-        656,
-        432
+        768,
+        96
       ],
       "id": "d099680a-58e2-4cbf-aa74-1ed6868f7b3d",
       "name": "Character Text Splitter"
@@ -93,8 +93,8 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
       "typeVersion": 1,
       "position": [
-        448,
-        224
+        560,
+        -112
       ],
       "id": "c46792bc-8468-4611-b082-f8536fec623a",
       "name": "Embeddings Ollama",
@@ -185,11 +185,254 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        944,
-        0
+        1040,
+        -336
       ],
       "id": "3e4c945e-cbe0-44f2-917b-d9b78561997e",
       "name": "Insert rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "dAbhJodJkxWwoBfZ",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "989b3f6d-90e7-4d87-a382-063918ec12e0",
+                    "leftValue": "={{ $binary.data.fileExtension }}",
+                    "rightValue": "pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "fcbd59a4-7049-4a39-9bf4-98afea5eab0b",
+                    "leftValue": "={{ $binary.data.fileExtension }}",
+                    "rightValue": "txt",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "3d3f9db4-41c7-4869-975d-da355b35f898",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "destinationKey": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        544,
+        288
+      ],
+      "id": "06fe999e-5680-4f2f-ba5c-cab894e16674",
+      "name": "Extract from File1"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "rag-ingesta",
+          "mode": "list",
+          "cachedResultName": "rag-ingesta"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        688,
+        288
+      ],
+      "id": "80a02403-3927-4dba-b8b3-dbf25a8d44b3",
+      "name": "Qdrant Vector Store1",
+      "credentials": {
+        "qdrantApi": {
+          "id": "QRPb7Z2dQ4rSVUeh",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        704,
+        512
+      ],
+      "id": "cabdb866-5093-4bac-850f-74e05ce9c395",
+      "name": "Default Data Loader1"
+    },
+    {
+      "parameters": {
+        "chunkSize": 500,
+        "chunkOverlap": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        704,
+        672
+      ],
+      "id": "4f8a6290-8981-4fd6-b91b-bc803ae31607",
+      "name": "Character Text Splitter1"
+    },
+    {
+      "parameters": {
+        "model": "nomic-embed-text:latest"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        496,
+        512
+      ],
+      "id": "87a1a89e-9c54-4ad0-83d7-b7f1e2fd3f66",
+      "name": "Embeddings Ollama1",
+      "credentials": {
+        "ollamaApi": {
+          "id": "XFDHqbOdPU9cx52k",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "documentos",
+          "mode": "list",
+          "cachedResultName": "documentos"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nombre": "={{ $item(0).$node[\"Webhook\"].binary.data.fileName }}",
+            "num_chunks": "={{ $items().length }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ruta_archivo",
+              "displayName": "ruta_archivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "num_chunks",
+              "displayName": "num_chunks",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fecha_procesado",
+              "displayName": "fecha_procesado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        992,
+        288
+      ],
+      "id": "7e3e2a11-42f1-4a73-93fb-045a96132701",
+      "name": "Insert rows in a table1",
       "credentials": {
         "postgres": {
           "id": "dAbhJodJkxWwoBfZ",
@@ -259,8 +502,81 @@
       "main": [
         [
           {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
             "node": "Extract from File",
             "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract from File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "node": "Qdrant Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qdrant Vector Store1": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader1": {
+      "ai_document": [
+        [
+          {
+            "node": "Qdrant Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Character Text Splitter1": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader1",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Ollama1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Qdrant Vector Store1",
+            "type": "ai_embedding",
             "index": 0
           }
         ]
@@ -272,7 +588,7 @@
     "executionOrder": "v1",
     "availableInMCP": false
   },
-  "versionId": "de77cf8e-181f-4f86-8308-f590f286f280",
+  "versionId": "69eb86f3-0f3e-4eb0-bfb1-f061910d7b06",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "f3a872dce7a49585175aa952617c150558e095bcf3394dae36ee999bce25f73b"

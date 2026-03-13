@@ -1,3 +1,4 @@
+### Petición 1: Ingesta de PDF
 POST http://localhost:5678/webhook-test/ingesta-documentos
 Content-Type: multipart/form-data; boundary=boundary
 
@@ -6,6 +7,19 @@ Content-Disposition: form-data; name="data"; filename="test_rag.pdf"
 Content-Type: application/pdf
 
 < ./test_rag.pdf
+--boundary--
+
+###
+
+### Petición 2: Ingesta de TXT
+POST http://localhost:5678/webhook-test/ingesta-documentos
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="data"; filename="info_extra.txt"
+Content-Type: text/plain
+
+< ./test2rag.txt
 --boundary--
 
 
