@@ -1,14 +1,19 @@
-# 🤖 Proyecto A: Arquitectura RAG Profesional con n8n, Telegram y Ollama
+# 🚀 HITO 3: Automatización Inteligente con n8n, Ollama, Qdrant y PostgreSQL
 
-Este repositorio contiene la implementación completa del **Proyecto A**, un sistema avanzado de **Generación Aumentada por Recuperación (RAG)** diseñado para operar de forma 100% local. El sistema permite a los usuarios interactuar con documentación técnica (PDF/TXT) a través de un bot de Telegram, garantizando la privacidad de los datos y respuestas precisas mediante IA.
+Este repositorio contiene la implementación conjunta de dos proyectos complementarios:
+- **Proyecto A (Guillermo Bazán):** Sistema avanzado de **Generación Aumentada por Recuperación (RAG)** que opera 100% en local.
+- **Proyecto B (Abdul Hakim):** **Chatbot Multiherramienta** diseñado para detectar intenciones y usar APIs dinámicas basándose en el análisis de Ollama.
+
+Ambos sistemas convergen para brindar soluciones potentes, operando con una arquitectura backend local que garantiza la privacidad de los datos.
 
 ## 📋 Índice
 1. [Arquitectura del Sistema](#-arquitectura-del-sistema)
-2. [Flujos de Trabajo (Workflows)](#-flujos-de-trabajo)
-3. [Configuración de IA y Modelos](#-configuración-de-ia-y-modelos)
-4. [Base de Datos y Persistencia](#-base-de-datos-y-persistencia)
-5. [Instalación y Despliegue](#-instalación-y-despliegue)
-6. [Pruebas y Validación](#-pruebas-y-validación)
+2. [Proyecto A: Flujos RAG (Guillermo)](#-proyecto-a-flujos-rag-guillermo)
+3. [Proyecto B: Chatbot Multiherramienta (Abdul)](#-proyecto-b-chatbot-multiherramienta-abdul)
+4. [Configuración de IA y Modelos](#-configuración-de-ia-y-modelos)
+5. [Base de Datos y Persistencia](#-base-de-datos-y-persistencia)
+6. [Instalación y Despliegue](#-instalación-y-despliegue)
+7. [Pruebas y Validación](#-pruebas-y-validación)
 
 ---
 
@@ -22,7 +27,7 @@ El sistema utiliza una arquitectura de microservicios orquestada por Docker:
 
 ---
 
-## 🔄 Flujos de Trabajo (Workflows)
+## 🔄 Proyecto A: Flujos RAG (Guillermo)
 
 ### 1. Ingesta de Documentos (Multiformato)
 El flujo de ingesta ha sido diseñado para ser flexible y resiliente:
@@ -38,6 +43,23 @@ El flujo de usuario final optimizado para producción:
 - **Telegram Trigger:** Utiliza *Long Polling* para eliminar la necesidad de túneles SSL/HTTPS (como Ngrok).
 - **AI Agent (ReAct):** Un agente con razonamiento lógico que utiliza la herramienta de búsqueda en Qdrant.
 - **Memoria de Sesión:** Implementación de `Window Buffer Memory` vinculada al `Chat ID` de Telegram, permitiendo conversaciones fluidas y aisladas por usuario.
+
+---
+
+## 🛠️ Proyecto B: Chatbot Multiherramienta (Abdul)
+
+El **Chatbot Multiherramienta** permite procesar las intenciones de un usuario en lenguaje natural e invocar fuentes externas de datos o APIs para proveer respuestas completas.
+
+### 1. Enrutamiento e Intención 
+El núcleo del flujo depende de un clasificador **Ollama** con prompt estricto que evalúa el texto del usuario y encauza la solicitud hacia una de estas cinco ramas (Switch Node):
+- **🌤️ Clima**: Usa un nodo intermedio de IA para extraer la ciudad del mensaje y luego pregunta a la API **OpenMeteo**.
+- **🌍 Países**: Consulta la información demográfica o banderas desde **REST Countries**.
+- **📚 Wikipedia**: Recupera de la **API de Wikipedia** extractos textuales que explican un concepto.
+- **😂 Chiste**: Consume la **JokeAPI** para buscar un chiste (ej. de programación).
+- **💬 General**: Responde directamente (Saludos, despedidas, charlas no técnicas) sin APIs externas.
+
+### 2. Consolidación y Conversación Natural
+Para evitar que el usuario reciba un JSON ilegible, todas las ramas poseen nodos **Ollama** finales que toman la información recuperada de las APIs (por ejemplo `{"temp":12, "weather":"cloudy"}`) y redactan una respuesta natural, en español y adecuada a la intención detectada, para finalmente guardarse como historial.
 
 ---
 
@@ -58,14 +80,25 @@ Para garantizar una experiencia de usuario limpia, se implementó:
 
 El sistema cumple con el requisito de trazabilidad guardando cada interacción en **PostgreSQL**.
 
+### Proyecto A (RAG)
 **Tabla: `consultas_rag`**
 | Columna | Tipo | Descripción |
 | :--- | :--- | :--- |
 | `id` | Serial | Clave primaria única |
 | `pregunta` | Text | Texto enviado por el usuario desde Telegram |
-| `respuesta` | Text | Respuesta final generada por la IA (limpia) |
-| `documentos_usados` | Array/JSON | Referencia a la fuente de información en Qdrant |
-| `fecha` | Timestamp | Momento exacto de la consulta |
+| `respuesta` | Text | Respuesta final generada |
+| `documentos_usados` | Array/JSON | Referencia en Qdrant |
+| `fecha` | Timestamp | Momento de la consulta |
+
+### Proyecto B (Chatbot Multiherramienta)
+**Tabla: `historial_chatbot`**
+| Columna | Tipo | Descripción |
+| :--- | :--- | :--- |
+| `id` | Serial | Clave primaria única |
+| `mensaje_usuario` | Text | Texto que el usuario envió al bot vía Webhook |
+| `intencion_detectada`| String | Intención clasificada (CLIMA, WIKI, PAISES...) |
+| `respuesta_bot` | Text | Texto final y natural formulado por la IA tras usar la API |
+| `herramienta_usada` | String | Intermediario usado (OpenMeteo, Wikipedia, etc.) |
+| `timestamp` | Timestamp| Fecha y hora de la interacción |
 
 ---
-

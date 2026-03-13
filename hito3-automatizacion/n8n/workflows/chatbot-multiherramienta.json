@@ -16,7 +16,9 @@
       ],
       "id": "95fc8da4-eafa-4d4e-87d7-693b4548cff7",
       "name": "Webhook",
-      "webhookId": "d9a1494d-c336-4907-84ee-9bd0634ada6d"
+      "webhookId": "d9a1494d-c336-4907-84ee-9bd0634ada6d",
+      "notes": "Punto de entrada (Webhook): Recibe los mensajes del usuario en JSON.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -48,7 +50,9 @@
           "id": "dsyt7ZGR6Ro980lW",
           "name": "Ollama account"
         }
-      }
+      },
+      "notes": "Nodo de Clasificación (Ollama): Define a qué rama irá la petición.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -157,7 +161,9 @@
         0
       ],
       "id": "db6261fa-7e03-408f-b391-c224bc4131e4",
-      "name": "Switch"
+      "name": "Switch",
+      "notes": "Enrutador Dinámico (Switch): Desvía el mensaje según la intención detectada por Ollama (CLIMA, CHISTE, etc).",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -189,7 +195,9 @@
           "id": "dsyt7ZGR6Ro980lW",
           "name": "Ollama account"
         }
-      }
+      },
+      "notes": "Extracción de Ciudad (Ollama): Extrae textualmente la ciudad para buscar el clima.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -290,7 +298,9 @@
           "id": "AEc6ZxJORvOEpb88",
           "name": "Postgres account"
         }
-      }
+      },
+      "notes": "Almacén de Consultas (Postgres): Guarda el log de las peticiones en la tabla historial_chatbot.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -305,7 +315,9 @@
         48
       ],
       "id": "2a574a1f-2ba7-4362-b7d5-daef3b2a436f",
-      "name": "Respond to Webhook"
+      "name": "Respond to Webhook",
+      "notes": "Respuesta Final (Webhook Response): Entrega el resultado originado por el LLM al usuario.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -337,7 +349,9 @@
           "id": "dsyt7ZGR6Ro980lW",
           "name": "Ollama account"
         }
-      }
+      },
+      "notes": "Generación de Respuesta - País (Ollama): Transforma los datos de la API a lenguaje natural.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -438,7 +452,9 @@
           "id": "AEc6ZxJORvOEpb88",
           "name": "Postgres account"
         }
-      }
+      },
+      "notes": "Almacén de Consultas (Postgres): Guarda el log de las peticiones en la tabla historial_chatbot.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -470,7 +486,9 @@
           "id": "dsyt7ZGR6Ro980lW",
           "name": "Ollama account"
         }
-      }
+      },
+      "notes": "Generación de Respuesta - Wiki (Ollama): Resume o explica lo solicitado usando la info de Wikipedia.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -571,7 +589,9 @@
           "id": "AEc6ZxJORvOEpb88",
           "name": "Postgres account"
         }
-      }
+      },
+      "notes": "Almacén de Consultas (Postgres): Guarda el log de las peticiones en la tabla historial_chatbot.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -603,7 +623,9 @@
           "id": "dsyt7ZGR6Ro980lW",
           "name": "Ollama account"
         }
-      }
+      },
+      "notes": "Generación de Respuesta - Chiste (Ollama): Cuenta el chiste recuperado de JokeAPI con gracia natural.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -704,7 +726,9 @@
           "id": "AEc6ZxJORvOEpb88",
           "name": "Postgres account"
         }
-      }
+      },
+      "notes": "Almacén de Consultas (Postgres): Guarda el log de las peticiones en la tabla historial_chatbot.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -736,7 +760,9 @@
           "id": "dsyt7ZGR6Ro980lW",
           "name": "Ollama account"
         }
-      }
+      },
+      "notes": "Respuesta General (Ollama): Charla básica para mensajes sin intención específica.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -837,7 +863,9 @@
           "id": "AEc6ZxJORvOEpb88",
           "name": "Postgres account"
         }
-      }
+      },
+      "notes": "Almacén de Consultas (Postgres): Guarda el log de las peticiones en la tabla historial_chatbot.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -851,7 +879,9 @@
         -128
       ],
       "id": "1453c88d-f5e7-4f2b-90df-2a19e62b4e31",
-      "name": "PAISES"
+      "name": "PAISES",
+      "notes": "API REST Countries: Recupera los datos de los países basándose en la petición.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -874,7 +904,9 @@
         16
       ],
       "id": "1ed142f7-52f5-4a5d-bb9e-8756ab205e6c",
-      "name": "WIKI"
+      "name": "WIKI",
+      "notes": "API Wikipedia: Consume el extracto introductorio disponible de la enciclopedia.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -888,7 +920,9 @@
         272
       ],
       "id": "69dd2f62-a8b9-4ec7-9523-654a4f006920",
-      "name": "CHISTES"
+      "name": "CHISTES",
+      "notes": "JokeAPI: Solicitud a la API libre de chistes en formato JSON.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -902,7 +936,9 @@
         -400
       ],
       "id": "426b97d9-de1c-4df4-9057-95708f675aa8",
-      "name": "HTTP Request1"
+      "name": "HTTP Request1",
+      "notes": "API OpenMeteo: Recupera los datos de clima para la ciudad.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -916,7 +952,9 @@
         -400
       ],
       "id": "285f667c-18b7-4087-a42e-1d1a4614e20d",
-      "name": "HTTP Request"
+      "name": "HTTP Request",
+      "notes": "API OpenMeteo: Recupera los datos de clima para la ciudad.",
+      "notesInFlow": true
     },
     {
       "parameters": {
