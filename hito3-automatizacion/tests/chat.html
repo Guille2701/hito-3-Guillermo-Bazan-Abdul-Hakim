@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot IA - Premium Experience</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0d9488;
+            --primary-hover: #0f766e;
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --bot-msg-bg: rgba(255, 255, 255, 0.1);
+            --user-msg-bg: #0d9488;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        #chat-container {
+            width: 100%;
+            max-width: 500px;
+            height: 85vh;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            margin: 20px;
+            position: relative;
+        }
+
+        #chat-container::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            border-radius: 26px;
+            z-index: -1;
+        }
+
+        #header {
+            padding: 24px;
+            text-align: center;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        #header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+        }
+
+        #header .status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        #header .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #22c55e;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+
+        #messages {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--glass-border) transparent;
+        }
+
+        #messages::-webkit-scrollbar { width: 6px; }
+        #messages::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+
+        .msg {
+            max-width: 85%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .msg.bot {
+            align-self: flex-start;
+            background: var(--bot-msg-bg);
+            border: 1px solid var(--glass-border);
+            border-bottom-left-radius: 4px;
+        }
+
+        .msg.user {
+            align-self: flex-end;
+            background: var(--user-msg-bg);
+            color: white;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 10px 15px -3px rgba(13, 148, 136, 0.3);
+        }
+
+        .msg.typing {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-style: italic;
+            padding-left: 0;
+        }
+
+        #input-area {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        #msg-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 12px 16px;
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        #msg-input:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.2);
+        }
+
+        #msg-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #send-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #send-btn:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        #send-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        #send-btn:disabled {
+            background: var(--glass-border);
+            cursor: not-allowed;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="chat-container">
+        <div id="header">
+            <h1>🤖 Asistente Virtual Hito 3</h1>
+            <div class="status">
+                <div class="status-dot"></div>
+                <span>Sistemas en línea</span>
+            </div>
+        </div>
+        <div id="messages">
+            <div class="msg bot">¡Hola! Soy tu asistente inteligente de última generación. Estoy listo para ayudarte con el clima, información de países, Wikipedia o incluso contarte un chiste. ¿Qué deseas consultar hoy?</div>
+        </div>
+        <div id="input-area">
+            <input type="text" id="msg-input" placeholder="Pregúntame algo..." autocomplete="off" onkeypress="handleEnter(event)">
+            <button id="send-btn" onclick="sendMessage()">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let isWaiting = false;
+
+        async function sendMessage() {
+            if (isWaiting) return;
+
+            const input = document.getElementById('msg-input');
+            const btn = document.getElementById('send-btn');
+            const text = input.value.trim();
+            if (!text) return;
+
+            addMessage(text, 'user');
+            input.value = '';
+
+            isWaiting = true;
+            input.disabled = true;
+            btn.disabled = true;
+            input.placeholder = "Procesando...";
+
+            const typingId = addMessage('El asistente está redactando...', 'bot typing');
+
+            try {
+                // Se usa el endpoint de n8n para pruebas localmente
+                const response = await fetch('http://localhost:5678/webhook-test/chatbot', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mensaje: text })
+                });
+
+                if (!response.ok) throw new Error('Error de conexión');
+
+                const data = await response.text();
+                
+                const typingElement = document.getElementById(typingId);
+                if (typingElement) typingElement.remove();
+                
+                addMessage(data, 'bot');
+
+            } catch (error) {
+                const typingElement = document.getElementById(typingId);
+                if (typingElement) typingElement.remove();
+                addMessage('Lo siento, ha ocurrido un error al conectar con el servidor. Por favor, asegúrate de que n8n esté activo.', 'bot');
+            } finally {
+                isWaiting = false;
+                input.disabled = false;
+                btn.disabled = false;
+                input.placeholder = "Pregúntame algo...";
+                input.focus();
+            }
+        }
+
+        function addMessage(text, sender) {
+            const msgsDiv = document.getElementById('messages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `msg ${sender}`;
+            msgDiv.textContent = text;
+            const id = 'msg-' + Date.now() + Math.random().toString(36).substr(2, 9);
+            msgDiv.id = id;
+            msgsDiv.appendChild(msgDiv);
+            msgsDiv.scrollTop = msgsDiv.scrollHeight;
+            return id;
+        }
+
+        function handleEnter(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+    </script>
+</body>
+</html>
