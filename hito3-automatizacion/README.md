@@ -38,11 +38,16 @@ El flujo de ingesta ha sido diseñado para ser flexible y resiliente:
 - **Fragmentación:** Uso de `Recursive Character Text Splitter` para dividir el texto en chunks óptimos.
 - **Vectorización:** Los fragmentos se convierten a vectores usando el modelo `nomic-embed-text` y se indexan en Qdrant.
 
+![Workflow ingesta](/docs/capturas/workflow_ingesta.jpg)
+
 ### 2. Consulta y Chatbot de Telegram
 El flujo de usuario final optimizado para producción:
 - **Telegram Trigger:** Utiliza *Long Polling* para eliminar la necesidad de túneles SSL/HTTPS (como Ngrok).
 - **AI Agent (ReAct):** Un agente con razonamiento lógico que utiliza la herramienta de búsqueda en Qdrant.
 - **Memoria de Sesión:** Implementación de `Window Buffer Memory` vinculada al `Chat ID` de Telegram, permitiendo conversaciones fluidas y aisladas por usuario.
+
+![Workflow consulta](/docs/capturas/workflow_consultas.jpg)
+
 
 ---
 
