@@ -84,9 +84,9 @@
 ## 🧪 Fase 4: Pruebas y Post-Producción (TRABAJO CONJUNTO)
 
 ### 4.1 Testing Integrado
-- [ ] Crear el archivo `tests/pruebas.http`.
-- [ ] Documentar llamadas POST a los 3 Webhooks (Ingesta, Consulta RAG, Mensaje Chatbot) para probar fácilmente.
-- [ ] Validar que todas las interacciones persisten correctamente en las tablas de PostgreSQL.
+- [X] Crear el archivo `tests/pruebas.http`.
+- [X] Documentar llamadas POST a los 3 Webhooks (Ingesta, Consulta RAG, Mensaje Chatbot) para probar fácilmente.
+- [X] Validar que todas las interacciones persisten correctamente en las tablas de PostgreSQL.
 
 ### 4.2 Documentación (`README.md` y `docs/`)
 - [x] Hacer capturas de pantalla de los workflows de n8n, de pruebas lanzadas con éxito, base de datos etc. Guardarlas en `docs/capturas/`.
@@ -97,20 +97,20 @@
   - [x] Link visible al vídeo demostrativo.
 
 ### 4.3 Git y Flujo de Trabajo
-- [ ] Más de 8-10 commits incrementales a lo largo de los días de desarrollo.
-- [ ] Commits bien estructurados (`feat: añade rama chistes`, `fix: error timeout olla`, etc.).
-- [ ] Usar la etiqueta `Co-authored-by:` en el cuerpo del mensaje del commit cuando el trabajo se comparta.
+- [X] Más de 8-10 commits incrementales a lo largo de los días de desarrollo.
+- [X] Commits bien estructurados (`feat: añade rama chistes`, `fix: error timeout olla`, etc.).
+- [X] Usar la etiqueta `Co-authored-by:` en el cuerpo del mensaje del commit cuando el trabajo se comparta.
 
 ### 4.4 Grabación del Vídeo Demostración (4-6 minutos)
-- [ ] **(30s)** Intro: Presentación de Guillermo y Abdul, y de los proyectos.
-- [ ] **(1m)** Arquitectura: Explicación MUY breve de cómo comunican los containers docker.
-- [ ] **(1m)** Workflows: Mostrar rápidamente los 3 flujos por pantalla en n8n.
-- [ ] **(1m)** Demo RAG (Guillermo): Subir PDF a Postman/VSCode, mostrar vector en Qdrant, hacer pregunta y visualizar DB.
-- [ ] **(1.5m)** Demo Chatbot (Abdul): Lanzar 4 peticiones distintas para disparar las 4 APIs y la de conversa, acabar enseñando que todas las peticiones están en PostgreSQL.
-- [ ] **(30s)** Conclusión y posibles áreas de mejora en el futuro.
-- [ ] Subir video a YouTube (como *No listado*) u otra plataforma e incluir enlace en el README y PR.
+- [X] **(30s)** Intro: Presentación de Guillermo y Abdul, y de los proyectos.
+- [X] **(1m)** Arquitectura: Explicación MUY breve de cómo comunican los containers docker.
+- [X] **(1m)** Workflows: Mostrar rápidamente los 3 flujos por pantalla en n8n.
+- [X] **(1m)** Demo RAG (Guillermo): Subir PDF a Postman/VSCode, mostrar vector en Qdrant, hacer pregunta y visualizar DB.
+- [X] **(1.5m)** Demo Chatbot (Abdul): Lanzar 4 peticiones distintas para disparar las 4 APIs y la de conversa, acabar enseñando que todas las peticiones están en PostgreSQL.
+- [X] **(30s)** Conclusión y posibles áreas de mejora en el futuro.
+- [X] Subir video a YouTube (como *No listado*) u otra plataforma e incluir enlace en el README y PR.
 
 ### 4.5 Cierre y Entrega Final (Límite: 08/03/2026 23:59)
-- [ ] Push final de código a la rama principal.
-- [ ] Crear Pull Request (o equivalente) con Título: `Entrega HITO 3 - [Nombre] - [Proyecto A - Proyecto B]`.
-- [ ] Marcar en la PR la checklist de requisitos asegurando funcionamiento *end-to-end*.
+- [X] Push final de código a la rama principal.
+- [X] Crear Pull Request (o equivalente) con Título: `Entrega HITO 3 - [Nombre] - [Proyecto A - Proyecto B]`.
+- [X] Marcar en la PR la checklist de requisitos asegurando funcionamiento *end-to-end*.
