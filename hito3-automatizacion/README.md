@@ -51,20 +51,104 @@ El flujo de usuario final optimizado para producción:
 
 ---
 
-## 🛠️ Proyecto B: Chatbot Multiherramienta (Abdul)
+# 🤖 Chatbot IA Multiherramienta - Hito 3 (Proyecto B Abdul Hakim) 
 
-El **Chatbot Multiherramienta** permite procesar las intenciones de un usuario en lenguaje natural e invocar fuentes externas de datos o APIs para proveer respuestas completas.
+Bienvenido a la documentación del **Chatbot IA Dinámico**, un asistente virtual inteligente construido íntegramente con **n8n**, **Ollama** (modelos LLM locales), y **PostgreSQL**. 
 
-### 1. Enrutamiento e Intención 
-El núcleo del flujo depende de un clasificador **Ollama** con prompt estricto que evalúa el texto del usuario y encauza la solicitud hacia una de estas cinco ramas (Switch Node):
-- **🌤️ Clima**: Usa un nodo intermedio de IA para extraer la ciudad del mensaje y luego pregunta a la API **OpenMeteo**.
-- **🌍 Países**: Consulta la información demográfica o banderas desde **REST Countries**.
-- **📚 Wikipedia**: Recupera de la **API de Wikipedia** extractos textuales que explican un concepto.
-- **😂 Chiste**: Consume la **JokeAPI** para buscar un chiste (ej. de programación).
-- **💬 General**: Responde directamente (Saludos, despedidas, charlas no técnicas) sin APIs externas.
+Este proyecto no es un simple bot de respuestas enlatadas; es un sistema avanzado de **agentes** capaz de interpretar la intención del usuario, extraer entidades (nombres de ciudades, personajes, etc.), consultar múltiples APIs de internet en tiempo real, y redactar respuestas 100% conversacionales y humanas.
 
-### 2. Consolidación y Conversación Natural
-Para evitar que el usuario reciba un JSON ilegible, todas las ramas poseen nodos **Ollama** finales que toman la información recuperada de las APIs (por ejemplo `{"temp":12, "weather":"cloudy"}`) y redactan una respuesta natural, en español y adecuada a la intención detectada, para finalmente guardarse como historial.
+---
+
+## 🏗️ Arquitectura del Proyecto
+
+El corazón de este chatbot es un flujo de automatización (Workflow) en n8n que procesa las peticiones HTTP (Webhook) enviadas desde un cliente web personalizado. 
+
+![Flujo General de n8n](docs/capturas/chatBot/WorkFlowGeneral.png)
+*Vista panorámica del flujo completo en n8n.*
+
+### 🧠 El "Cerebro" (Clasificador de Intenciones)
+Cuando entra un mensaje, el primer nodo de Ollama actúa como un **Clasificador**. Lee la frase del usuario y decide a qué "herramienta" debe llamar, etiquetando el mensaje con una de estas cinco categorías: `CLIMA`, `PAISES`, `WIKI`, `CHISTE` o `GENERAL`. Un nodo **Switch** redirige el flujo por el camino correspondiente.
+
+A continuación, se detalla cada una de las capacidades del bot:
+
+---
+
+## 🛠️ Herramientas Integradas (Caminos del Switch)
+
+Para que el bot sea **100% dinámico**, todas las herramientas externas siguen una arquitectura de 4 pasos:
+1. **Extractor (Ollama):** Saca la palabra clave exacta del mensaje del usuario (ej: "París").
+2. **Consulta a la API (HTTP Request):** Inyecta la palabra clave en la URL para buscar datos reales en internet.
+3. **Redactor (Ollama):** Transforma el JSON crudo de la API en una respuesta humana en perfecto español.
+4. **Base de Datos (PostgreSQL):** Guarda el historial de la interacción.
+
+### 🌤️ 1. El Clima (OpenMeteo API)
+![Camino del Clima](docs/capturas/chatBot/clima.png)
+
+Este es el camino más complejo. Como la API del clima no entiende nombres de ciudades, el flujo realiza una doble consulta:
+* Usa la **Geocoding API** de OpenMeteo para traducir la ciudad extraída a Latitud y Longitud.
+* Pasa esas coordenadas a la API de **Forecast** para obtener la temperatura actual exacta.
+* Ollama redacta un parte meteorológico amigable.
+
+### 🌍 2. Información de Países (RESTCountries API)
+![Camino de Países](docs/capturas/chatBot/paises.png)
+
+El bot es capaz de dar clases de geografía. 
+* Extrae el nombre del país solicitado.
+* Consulta la API de **RESTCountries**.
+* Extrae del JSON la capital y la población exacta.
+* Ollama redacta la respuesta evitando formatos técnicos.
+
+### 📚 3. Enciclopedia (Wikipedia API)
+![Camino de Wikipedia](docs/capturas/chatBot/wiki.png)
+
+Perfecto para buscar información sobre personajes históricos, monumentos o conceptos.
+* Extrae el concepto principal.
+* Consulta la **API REST de Wikipedia** (inyectando cabeceras `User-Agent` personalizadas por seguridad).
+* Lee el `extract` (resumen) del artículo.
+* Ollama asimila la información y la resume de forma conversacional.
+
+### 😄 4. Chistes (JokeAPI)
+![Camino de Chistes](docs/capturas/chatBot/chiste.png)
+
+Para darle un toque de humor, el bot incluye un módulo de chistes.
+* El Extractor analiza el contexto: si el usuario menciona tecnología/ordenadores, busca chistes categoría `Programming`; si no, busca categoría `Any`.
+* Consulta la **JokeAPI** en español.
+* Ollama te cuenta el chiste añadiendo onomatopeyas o comentarios simpáticos.
+
+### 💬 5. Charla General (Fallback)
+![Camino Default / Charla General](docs/capturas/chatBot/default.png)
+
+Si el usuario simplemente saluda ("¡Hola! ¿Qué tal?") o hace una pregunta que no encaja en las APIs, el nodo Switch lanza el flujo por la salida por defecto (*Fallback*).
+* Aquí no hay consultas a APIs externas.
+* El mensaje va directo a Ollama para que mantenga una conversación fluida y natural como asistente virtual genérico.
+
+---
+
+## 🗄️ Trazabilidad y Base de Datos
+
+El sistema cumple con el requisito de persistencia guardando cada interacción en una base de datos **PostgreSQL**. 
+
+Todos los caminos del bot desembocan en un nodo de inserción que guarda en la tabla `historial_chatbot`:
+* El `mensaje_usuario` original.
+* La `intencion_detectada` (WIKI, CLIMA, etc.).
+* La `respuesta_bot` (el texto final generado por la IA).
+* La `herramienta_usada` (ej: Wikipedia API, OpenMeteo, Ollama Directo).
+
+Finalmente, un único nodo **Respond to Webhook** captura la respuesta recién guardada y se la devuelve al usuario.
+
+---
+
+## 💻 Interfaz de Usuario (Frontend)
+
+Para la demostración del proyecto, se ha desarrollado un cliente web de **alto nivel** (`chat.html`) con una estética moderna y funcional.
+
+**Características de la interfaz:**
+* 💎 **Diseño Glassmorphism:** Interfaz translúcida y elegante con efectos de desenfoque de fondo y bordes brillantes.
+* 🎨 **Tipografía y Colores Modernos:** Uso de la fuente *Inter* y una paleta de colores profesional centrada en tonos oceánicos y oscuros.
+* ⚡ **Experiencia Fluida:** Animaciones de entrada de mensajes y transiciones suaves para una sensación de aplicación nativa.
+* 🛡️ **Protección Anti-Spam:** Bloqueo inteligente de controles durante el procesamiento de la IA para evitar saturación.
+* ✍️ **Feedback de Estado:** Indicador visual de "redacción" que mantiene informada al usuario mientras el LLM genera la respuesta.
+
 
 ---
 
@@ -107,3 +191,44 @@ El sistema cumple con el requisito de trazabilidad guardando cada interacción e
 | `timestamp` | Timestamp| Fecha y hora de la interacción |
 
 ---
+
+## 📦 Instalación y Despliegue
+
+Sigue estos pasos para levantar el ecosistema completo en tu máquina local:
+
+### 1. Requisitos Previos
+* Git y Docker (con Docker Compose) instalados.
+* [Ollama](https://ollama.com/) instalado y ejecutándose si prefieres usarlo fuera de Docker (aunque viene incluido en el compose).
+
+### 2. Configuración de Entorno
+Copia el archivo de plantilla y configura tus variables:
+```bash
+cp docker/.env.example .env
+```
+*(El archivo `.env` ya ha sido configurado para funcionar de inmediato en este repositorio).*
+
+### 3. Levantar Servicios
+Ejecuta el siguiente comando desde la raíz del proyecto:
+```bash
+docker compose -f docker/docker-compose.yml up -d
+```
+
+### 4. Preparación de Modelos (Ollama)
+Una vez levantado el contenedor de Ollama, descarga los modelos necesarios:
+```bash
+docker exec -it ollama-hito3 ollama pull qwen2.5:14b
+docker exec -it ollama-hito3 ollama pull nomic-embed-text
+```
+
+---
+
+## 🧪 Pruebas y Validación
+
+Para verificar que todo funciona correctamente:
+1. **Frontend:** Abre el archivo `tests/chat.html` en tu navegador para interactuar con el Chatbot Multiherramienta.
+2. **PostgreSQL:** Accede a tu cliente SQL favorito (puerto 5432) y verifica que las tablas en `automatizacion_db` están recibiendo registros.
+3. **n8n:** Entra en `http://localhost:5678` para ver los workflows en acción.
+
+---
+
+**Desarrollado por:** Guillermo Bazán y Abdul Hakim.

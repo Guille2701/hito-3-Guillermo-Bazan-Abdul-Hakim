@@ -60,24 +60,24 @@
 ## 🤖 Fase 3: Chatbot Multiherramienta (ABDUL HAKIM)
 
 ### 3.1 Workflow Principal y Análisis de Intención (`n8n/workflows/chatbot-multiherramienta.json`)
-- [ ] Nodo **Webhook** configurado para recibir el mensaje en JSON del usuario.
-- [ ] Nodo **Ollama** configurado con un *System Prompt* estricto para analizar la intención de la pregunta.
-  - [ ] Debe devolver *únicamente* una categoría: `CLIMA`, `PAISES`, `WIKIPEDIA`, `CHISTE`, o `GENERAL`.
-- [ ] Nodo **Switch** configurado para redirigir el flujo a 5 salidas distintas en función de la categoría detectada.
+- [x] Nodo **Webhook** configurado para recibir el mensaje en JSON del usuario.
+- [x] Nodo **Ollama** configurado con un *System Prompt* estricto para analizar la intención de la pregunta.
+  - [x] Debe devolver *únicamente* una categoría: `CLIMA`, `PAISES`, `WIKIPEDIA`, `CHISTE`, o `GENERAL`.
+- [x] Nodo **Switch** configurado para redirigir el flujo a 5 salidas distintas en función de la categoría detectada.
 
 ### 3.2 Integración de APIs (Nodos HTTP Request)
-- [ ] **Rama 1 (Clima):** Configurar HTTP Request a OpenMeteo (usar parámetros dinámicos si se detecta ciudad, o coordenadas base).
-- [ ] **Rama 2 (Países):** Configurar HTTP Request a REST Countries.
-- [ ] **Rama 3 (Wikipedia):** Configurar HTTP Request a la API de Wikipedia.
-- [ ] **Rama 4 (Chistes):** Configurar HTTP Request a JokeAPI (Asegurarse que sea ES ó programación).
-- [ ] **Rama 5 (General):** Puente directo al Nodo Ollama Final (Conversación normal).
+- [x] **Rama 1 (Clima):** Configurar HTTP Request a OpenMeteo (usar parámetros dinámicos si se detecta ciudad, o coordenadas base).
+- [x] **Rama 2 (Países):** Configurar HTTP Request a REST Countries.
+- [x] **Rama 3 (Wikipedia):** Configurar HTTP Request a la API de Wikipedia.
+- [x] **Rama 4 (Chistes):** Configurar HTTP Request a JokeAPI (Asegurarse que sea ES ó programación).
+- [x] **Rama 5 (General):** Puente directo al Nodo Ollama Final (Conversación normal).
 
 ### 3.3 Consolidación, Respuesta Natural y Persistencia
-- [ ] Nodos **Merge** o lógica equivalente para unificar el flujo después de llamar a las APIs.
-- [ ] Nodo **Ollama** final: Su labor es tomar los JSON o texto en bruto que devuelvan las APIs (ej: `{ "temp": 15, "city": "Madrid" }`) y transformarlos en texto conversacional de la mano del input original del usuario ("Hace una temperatura ideal de 15 grados en Madrid").
-- [ ] Nodo **PostgreSQL** para guardar la interacción en la base de datos (mensaje origen, intención detectada por el primer Ollama, respuesta final).
-- [ ] Manejo de Errores Críticos: Añadir ramas de *fallback* para el caso en el que la API devuelva un 404 o timeout.
-- [ ] Exportar el JSON del workflow a la carpeta `n8n/workflows/`.
+- [x] Nodos **Merge** o lógica equivalente para unificar el flujo después de llamar a las APIs.
+- [x] Nodo **Ollama** final: Su labor es tomar los JSON o texto en bruto que devuelvan las APIs (ej: `{ "temp": 15, "city": "Madrid" }`) y transformarlos en texto conversacional de la mano del input original del usuario ("Hace una temperatura ideal de 15 grados en Madrid").
+- [x] Nodo **PostgreSQL** para guardar la interacción en la base de datos (mensaje origen, intención detectada por el primer Ollama, respuesta final).
+- [x] Manejo de Errores Críticos: Añadir ramas de *fallback* para el caso en el que la API devuelva un 404 o timeout.
+- [x] Exportar el JSON del workflow a la carpeta `n8n/workflows/`.
 
 ---
 
@@ -89,12 +89,12 @@
 - [ ] Validar que todas las interacciones persisten correctamente en las tablas de PostgreSQL.
 
 ### 4.2 Documentación (`README.md` y `docs/`)
-- [ ] Hacer capturas de pantalla de los workflows de n8n, de pruebas lanzadas con éxito, base de datos etc. Guardarlas en `docs/capturas/`.
-- [ ] Documentar en `docs/DEMO.md` casos de uso específicos simulando las pruebas.
-- [ ] Escribir el `README.md` abordando:
-  - [ ] Detalles de instalación y levantado de `docker-compose`.
-  - [ ] Explicación de las funcionalidades clave del RAG (Guillermo) y Chatbot (Abdul).
-  - [ ] Link visible al vídeo demostrativo.
+- [x] Hacer capturas de pantalla de los workflows de n8n, de pruebas lanzadas con éxito, base de datos etc. Guardarlas en `docs/capturas/`.
+- [x] Documentar en `docs/DEMO.md` casos de uso específicos simulando las pruebas.
+- [x] Escribir el `README.md` abordando:
+  - [x] Detalles de instalación y levantado de `docker-compose`.
+  - [x] Explicación de las funcionalidades clave del RAG (Guillermo) y Chatbot (Abdul).
+  - [x] Link visible al vídeo demostrativo.
 
 ### 4.3 Git y Flujo de Trabajo
 - [ ] Más de 8-10 commits incrementales a lo largo de los días de desarrollo.
