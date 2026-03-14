@@ -16,43 +16,7 @@
       ],
       "id": "95fc8da4-eafa-4d4e-87d7-693b4548cff7",
       "name": "Webhook",
-      "webhookId": "d9a1494d-c336-4907-84ee-9bd0634ada6d",
-      "notes": "Punto de entrada (Webhook): Recibe los mensajes del usuario en JSON.",
-      "notesInFlow": true
-    },
-    {
-      "parameters": {
-        "modelId": {
-          "__rl": true,
-          "value": "deepseek-coder:33b",
-          "mode": "list",
-          "cachedResultName": "deepseek-coder:33b"
-        },
-        "messages": {
-          "values": [
-            {
-              "content": "=Eres un asistente que clasifica la intención de los mensajes de los usuarios.\nTu tarea es leer el mensaje del usuario y clasificarlo en UNA de estas 5 categorías:\n\n- CLIMA: Si pregunta por el tiempo, temperatura, lluvia, meteorología.\n- PAISES: Si pregunta por datos de un país, capitales, continentes, fronteras.\n- WIKI: Si pide saber qué es algo, un resumen de historia, biografías de famosos o conceptos.\n- CHISTE: Si pide que le cuentes un chiste o algo gracioso.\n- GENERAL: Si es un saludo (hola, buenos días), una despedida, o cualquier otra cosa que no encaje arriba.\n\nREGLA ESTRICTA: Tu respuesta debe ser ÚNICAMENTE la palabra en MAYÚSCULAS de la categoría. No añadas puntos, ni saludos, ni explicaciones. Solo la palabra exacta.\n\nMensaje del usuario a analizar:\n{{ $json.body.mensaje }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.ollama",
-      "typeVersion": 1,
-      "position": [
-        352,
-        0
-      ],
-      "id": "1464ac2a-80fc-48c9-b203-098c305704c9",
-      "name": "Message a model",
-      "credentials": {
-        "ollamaApi": {
-          "id": "dsyt7ZGR6Ro980lW",
-          "name": "Ollama account"
-        }
-      },
-      "notes": "Nodo de Clasificación (Ollama): Define a qué rama irá la petición.",
-      "notesInFlow": true
+      "webhookId": "d9a1494d-c336-4907-84ee-9bd0634ada6d"
     },
     {
       "parameters": {
@@ -161,43 +125,7 @@
         0
       ],
       "id": "db6261fa-7e03-408f-b391-c224bc4131e4",
-      "name": "Switch",
-      "notes": "Enrutador Dinámico (Switch): Desvía el mensaje según la intención detectada por Ollama (CLIMA, CHISTE, etc).",
-      "notesInFlow": true
-    },
-    {
-      "parameters": {
-        "modelId": {
-          "__rl": true,
-          "value": "llama3:8b-instruct-q4_K_M",
-          "mode": "list",
-          "cachedResultName": "llama3:8b-instruct-q4_K_M"
-        },
-        "messages": {
-          "values": [
-            {
-              "content": "=Extrae ÚNICAMENTE el nombre de la ciudad del que el usuario quiere saber el clima en este mensaje: \"{{ $('Webhook').item.json.body.mensaje }}\". Solo la ciudad, nada más."
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.ollama",
-      "typeVersion": 1,
-      "position": [
-        1200,
-        -416
-      ],
-      "id": "2f37c631-eef9-4807-99c7-1d9f23829be7",
-      "name": "Message a model1",
-      "credentials": {
-        "ollamaApi": {
-          "id": "dsyt7ZGR6Ro980lW",
-          "name": "Ollama account"
-        }
-      },
-      "notes": "Extracción de Ciudad (Ollama): Extrae textualmente la ciudad para buscar el clima.",
-      "notesInFlow": true
+      "name": "Switch"
     },
     {
       "parameters": {
@@ -288,8 +216,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        2384,
-        -432
+        2400,
+        -160
       ],
       "id": "10b0daf9-4425-4a66-bbee-83318f49f99a",
       "name": "Insert rows in a table",
@@ -298,9 +226,7 @@
           "id": "AEc6ZxJORvOEpb88",
           "name": "Postgres account"
         }
-      },
-      "notes": "Almacén de Consultas (Postgres): Guarda el log de las peticiones en la tabla historial_chatbot.",
-      "notesInFlow": true
+      }
     },
     {
       "parameters": {
@@ -311,47 +237,11 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        2752,
-        48
+        2688,
+        -16
       ],
       "id": "2a574a1f-2ba7-4362-b7d5-daef3b2a436f",
-      "name": "Respond to Webhook",
-      "notes": "Respuesta Final (Webhook Response): Entrega el resultado originado por el LLM al usuario.",
-      "notesInFlow": true
-    },
-    {
-      "parameters": {
-        "modelId": {
-          "__rl": true,
-          "value": "llama3:8b-instruct-q4_K_M",
-          "mode": "list",
-          "cachedResultName": "llama3:8b-instruct-q4_K_M"
-        },
-        "messages": {
-          "values": [
-            {
-              "content": "=Eres un experto en geografía. El usuario te ha dicho: \"{{ $('Webhook').item.json.body.mensaje }}\"\nAquí tienes los datos:\n- País: {{ $('PAISES').item.json[0].name.common }}\n- Capital: {{ $('PAISES').item.json[0].capital[0] }}\n- Población: {{ $('PAISES').item.json[0].population }}\n\nREGLA ESTRICTA: Redacta una respuesta natural con estos datos. ÚNICA Y EXCLUSIVAMENTE EN ESPAÑOL."
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.ollama",
-      "typeVersion": 1,
-      "position": [
-        1488,
-        -144
-      ],
-      "id": "338b70f0-de26-4b94-9de8-7d3eb4841ab8",
-      "name": "Message a model2",
-      "credentials": {
-        "ollamaApi": {
-          "id": "dsyt7ZGR6Ro980lW",
-          "name": "Ollama account"
-        }
-      },
-      "notes": "Generación de Respuesta - País (Ollama): Transforma los datos de la API a lenguaje natural.",
-      "notesInFlow": true
+      "name": "Respond to Webhook"
     },
     {
       "parameters": {
@@ -442,8 +332,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1824,
-        -160
+        1984,
+        -128
       ],
       "id": "e616cda5-d9cd-443c-ab25-b7e9eba3e4a8",
       "name": "Insert rows in a table1",
@@ -452,43 +342,7 @@
           "id": "AEc6ZxJORvOEpb88",
           "name": "Postgres account"
         }
-      },
-      "notes": "Almacén de Consultas (Postgres): Guarda el log de las peticiones en la tabla historial_chatbot.",
-      "notesInFlow": true
-    },
-    {
-      "parameters": {
-        "modelId": {
-          "__rl": true,
-          "value": "llama3:8b-instruct-q4_K_M",
-          "mode": "list",
-          "cachedResultName": "llama3:8b-instruct-q4_K_M"
-        },
-        "messages": {
-          "values": [
-            {
-              "content": "=Eres un asistente virtual muy culto y educado.\nEl usuario te ha preguntado esto: \n{{ $('Webhook').item.json.body.mensaje }}\n\nAquí tienes el resumen que he sacado de la API de Wikipedia:\n\"{{ $('WIKI').item.json.extract }}\"\n\nREGLA ESTRICTA: Redacta una respuesta conversacional y fácil de leer basándote en esta información. Hazlo ÚNICA Y EXCLUSIVAMENTE en ESPAÑOL."
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.ollama",
-      "typeVersion": 1,
-      "position": [
-        1504,
-        32
-      ],
-      "id": "0f10746c-46c1-4901-8a3d-e5571834fabb",
-      "name": "Message a model3",
-      "credentials": {
-        "ollamaApi": {
-          "id": "dsyt7ZGR6Ro980lW",
-          "name": "Ollama account"
-        }
-      },
-      "notes": "Generación de Respuesta - Wiki (Ollama): Resume o explica lo solicitado usando la info de Wikipedia.",
-      "notesInFlow": true
+      }
     },
     {
       "parameters": {
@@ -589,43 +443,7 @@
           "id": "AEc6ZxJORvOEpb88",
           "name": "Postgres account"
         }
-      },
-      "notes": "Almacén de Consultas (Postgres): Guarda el log de las peticiones en la tabla historial_chatbot.",
-      "notesInFlow": true
-    },
-    {
-      "parameters": {
-        "modelId": {
-          "__rl": true,
-          "value": "llama3:8b-instruct-q4_K_M",
-          "mode": "list",
-          "cachedResultName": "llama3:8b-instruct-q4_K_M"
-        },
-        "messages": {
-          "values": [
-            {
-              "content": "=Eres un comediante virtual muy gracioso. \nEl usuario te ha dicho: \"{{ $('Webhook').item.json.body.mensaje }}\"\n\nAquí tienes el chiste que he sacado de la API:\n{{ $('CHISTES').item.json.joke }}{{ $('CHISTES').item.json.setup }}\n{{ $('CHISTES').item.json.delivery }}\n\nREGLA ESTRICTA: Cuéntaselo al usuario de forma natural, añadiendo alguna risa o comentario simpático. ÚNICA Y EXCLUSIVAMENTE EN ESPAÑOL."
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.ollama",
-      "typeVersion": 1,
-      "position": [
-        1648,
-        272
-      ],
-      "id": "181dee6e-ff0d-4b86-90b0-127ca955064c",
-      "name": "Message a model4",
-      "credentials": {
-        "ollamaApi": {
-          "id": "dsyt7ZGR6Ro980lW",
-          "name": "Ollama account"
-        }
-      },
-      "notes": "Generación de Respuesta - Chiste (Ollama): Cuenta el chiste recuperado de JokeAPI con gracia natural.",
-      "notesInFlow": true
+      }
     },
     {
       "parameters": {
@@ -716,8 +534,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        2032,
-        224
+        2016,
+        240
       ],
       "id": "be46ed9f-8a6a-4018-a580-b8c095f3422b",
       "name": "Insert rows in a table3",
@@ -726,43 +544,7 @@
           "id": "AEc6ZxJORvOEpb88",
           "name": "Postgres account"
         }
-      },
-      "notes": "Almacén de Consultas (Postgres): Guarda el log de las peticiones en la tabla historial_chatbot.",
-      "notesInFlow": true
-    },
-    {
-      "parameters": {
-        "modelId": {
-          "__rl": true,
-          "value": "llama3:8b-instruct-q4_K_M",
-          "mode": "list",
-          "cachedResultName": "llama3:8b-instruct-q4_K_M"
-        },
-        "messages": {
-          "values": [
-            {
-              "content": "=Eres un asistente virtual amigable, útil y muy educado. \n\nEl usuario te está hablando de forma general o saludándote. Te ha dicho exactamente esto:\n\"{{ $('Webhook').item.json.body.mensaje }}\"\n\nResponde de forma natural, humana y conversacional. Si es un saludo, devuélvelo con alegría. Si te hace una pregunta general, respóndela brevemente."
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.ollama",
-      "typeVersion": 1,
-      "position": [
-        1088,
-        480
-      ],
-      "id": "83c21b7a-34cb-4129-9961-400607ef962c",
-      "name": "Message a model5",
-      "credentials": {
-        "ollamaApi": {
-          "id": "dsyt7ZGR6Ro980lW",
-          "name": "Ollama account"
-        }
-      },
-      "notes": "Respuesta General (Ollama): Charla básica para mensajes sin intención específica.",
-      "notesInFlow": true
+      }
     },
     {
       "parameters": {
@@ -863,9 +645,7 @@
           "id": "AEc6ZxJORvOEpb88",
           "name": "Postgres account"
         }
-      },
-      "notes": "Almacén de Consultas (Postgres): Guarda el log de las peticiones en la tabla historial_chatbot.",
-      "notesInFlow": true
+      }
     },
     {
       "parameters": {
@@ -879,9 +659,7 @@
         -128
       ],
       "id": "1453c88d-f5e7-4f2b-90df-2a19e62b4e31",
-      "name": "PAISES",
-      "notes": "API REST Countries: Recupera los datos de los países basándose en la petición.",
-      "notesInFlow": true
+      "name": "PAISES"
     },
     {
       "parameters": {
@@ -904,9 +682,7 @@
         16
       ],
       "id": "1ed142f7-52f5-4a5d-bb9e-8756ab205e6c",
-      "name": "WIKI",
-      "notes": "API Wikipedia: Consume el extracto introductorio disponible de la enciclopedia.",
-      "notesInFlow": true
+      "name": "WIKI"
     },
     {
       "parameters": {
@@ -920,9 +696,7 @@
         272
       ],
       "id": "69dd2f62-a8b9-4ec7-9523-654a4f006920",
-      "name": "CHISTES",
-      "notes": "JokeAPI: Solicitud a la API libre de chistes en formato JSON.",
-      "notesInFlow": true
+      "name": "CHISTES"
     },
     {
       "parameters": {
@@ -936,9 +710,7 @@
         -400
       ],
       "id": "426b97d9-de1c-4df4-9057-95708f675aa8",
-      "name": "HTTP Request1",
-      "notes": "API OpenMeteo: Recupera los datos de clima para la ciudad.",
-      "notesInFlow": true
+      "name": "HTTP Request1"
     },
     {
       "parameters": {
@@ -952,9 +724,7 @@
         -400
       ],
       "id": "285f667c-18b7-4087-a42e-1d1a4614e20d",
-      "name": "HTTP Request",
-      "notes": "API OpenMeteo: Recupera los datos de clima para la ciudad.",
-      "notesInFlow": true
+      "name": "HTTP Request"
     },
     {
       "parameters": {
@@ -967,7 +737,7 @@
         "messages": {
           "values": [
             {
-              "content": "=Eres un asistente virtual amable y conversacional.\nEl usuario te ha preguntado esto: \n{{ $('Webhook').item.json.body.mensaje }}\n\nAquí tienes los datos reales que he sacado de la API:\nTemperatura actual: {{ $json.current.temperature_2m }} °C\n\nREGLA ESTRICTA: Redacta tu respuesta ÚNICA Y EXCLUSIVAMENTE en ESPAÑOL. Sé natural, amigable y breve dándole el clima al usuario."
+              "content": "=Extrae ÚNICAMENTE el nombre de la ciudad del que el usuario quiere saber el clima en este mensaje: \"{{ $('Webhook').item.json.body.mensaje }}\". Solo la ciudad, nada más."
             }
           ]
         },
@@ -976,11 +746,43 @@
       "type": "@n8n/n8n-nodes-langchain.ollama",
       "typeVersion": 1,
       "position": [
-        2080,
-        -400
+        1200,
+        -416
       ],
-      "id": "abb7dc18-9c69-42af-b7a3-e0a4319808c7",
-      "name": "Message a model6",
+      "id": "2f37c631-eef9-4807-99c7-1d9f23829be7",
+      "name": "Filtro Ciudad",
+      "credentials": {
+        "ollamaApi": {
+          "id": "dsyt7ZGR6Ro980lW",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "llama3:8b-instruct-q4_K_M",
+          "mode": "list",
+          "cachedResultName": "llama3:8b-instruct-q4_K_M"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Extrae el nombre del país del que habla el usuario en este mensaje: \"{{ $('Webhook').item.json.body.mensaje }}\".\n\nREGLA ESTRICTA: Traduce el nombre del país al INGLÉS y responde ÚNICAMENTE con ese nombre en inglés, sin puntos ni otras palabras. \nEjemplos: \n- Si dice \"España\", responde: Spain\n- Si dice \"Francia\", responde: France\n- Si dice \"Japón\", responde: Japan"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.ollama",
+      "typeVersion": 1,
+      "position": [
+        992,
+        -112
+      ],
+      "id": "3cfd4c5e-9352-4fb6-8fea-e2ff86362aaa",
+      "name": "Filtro Pais",
       "credentials": {
         "ollamaApi": {
           "id": "dsyt7ZGR6Ro980lW",
@@ -1012,39 +814,7 @@
         32
       ],
       "id": "fafe05d9-0ab9-41f6-98d1-7618a3379c7e",
-      "name": "Message a model7",
-      "credentials": {
-        "ollamaApi": {
-          "id": "dsyt7ZGR6Ro980lW",
-          "name": "Ollama account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "modelId": {
-          "__rl": true,
-          "value": "llama3:8b-instruct-q4_K_M",
-          "mode": "list",
-          "cachedResultName": "llama3:8b-instruct-q4_K_M"
-        },
-        "messages": {
-          "values": [
-            {
-              "content": "=Extrae ÚNICAMENTE el nombre del país del que habla el usuario en este mensaje: \"{{ $('Webhook').item.json.body.mensaje }}\". Responde solo con el nombre del país, sin puntos ni otras palabras (ejemplo: Francia, Japon, Argentina)."
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.ollama",
-      "typeVersion": 1,
-      "position": [
-        992,
-        -112
-      ],
-      "id": "3cfd4c5e-9352-4fb6-8fea-e2ff86362aaa",
-      "name": "Message a model8",
+      "name": "Filtro Tema",
       "credentials": {
         "ollamaApi": {
           "id": "dsyt7ZGR6Ro980lW",
@@ -1076,7 +846,199 @@
         224
       ],
       "id": "33214735-e0f1-4e84-b00f-241c00c1f987",
-      "name": "Message a model9",
+      "name": "Filtro Chiste",
+      "credentials": {
+        "ollamaApi": {
+          "id": "dsyt7ZGR6Ro980lW",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "llama3:8b-instruct-q4_K_M",
+          "mode": "list",
+          "cachedResultName": "llama3:8b-instruct-q4_K_M"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Eres un asistente virtual amigable, útil y muy educado. \n\nEl usuario te está hablando de forma general o saludándote. Te ha dicho exactamente esto:\n\"{{ $('Webhook').item.json.body.mensaje }}\"\n\nResponde de forma natural, humana y conversacional. Si es un saludo, devuélvelo con alegría. Si te hace una pregunta general, respóndela brevemente."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.ollama",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        480
+      ],
+      "id": "83c21b7a-34cb-4129-9961-400607ef962c",
+      "name": "Default",
+      "credentials": {
+        "ollamaApi": {
+          "id": "dsyt7ZGR6Ro980lW",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "llama3:8b-instruct-q4_K_M",
+          "mode": "list",
+          "cachedResultName": "llama3:8b-instruct-q4_K_M"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Eres un asistente virtual amable y conversacional.\nEl usuario te ha preguntado esto: \n{{ $('Webhook').item.json.body.mensaje }}\n\nAquí tienes los datos reales que he sacado de la API:\nTemperatura actual: {{ $json.current.temperature_2m }} °C\n\nREGLA ESTRICTA: Redacta tu respuesta ÚNICA Y EXCLUSIVAMENTE en ESPAÑOL. Sé natural, amigable y breve dándole el clima al usuario."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.ollama",
+      "typeVersion": 1,
+      "position": [
+        2080,
+        -400
+      ],
+      "id": "abb7dc18-9c69-42af-b7a3-e0a4319808c7",
+      "name": "Mensaje Clima",
+      "credentials": {
+        "ollamaApi": {
+          "id": "dsyt7ZGR6Ro980lW",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "llama3:8b-instruct-q4_K_M",
+          "mode": "list",
+          "cachedResultName": "llama3:8b-instruct-q4_K_M"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Eres un experto en geografía. El usuario te ha dicho: \"{{ $('Webhook').item.json.body.mensaje }}\"\nAquí tienes los datos:\n- País: {{ $('PAISES').item.json[0].name.common }}\n- Capital: {{ $('PAISES').item.json[0].capital[0] }}\n- Población: {{ $('PAISES').item.json[0].population }}\n\nREGLA ESTRICTA: Redacta una respuesta natural con estos datos. ÚNICA Y EXCLUSIVAMENTE EN ESPAÑOL."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.ollama",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        -144
+      ],
+      "id": "338b70f0-de26-4b94-9de8-7d3eb4841ab8",
+      "name": "Mensaje Pais",
+      "credentials": {
+        "ollamaApi": {
+          "id": "dsyt7ZGR6Ro980lW",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "llama3:8b-instruct-q4_K_M",
+          "mode": "list",
+          "cachedResultName": "llama3:8b-instruct-q4_K_M"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Eres un asistente virtual muy culto y educado.\nEl usuario te ha preguntado esto: \n{{ $('Webhook').item.json.body.mensaje }}\n\nAquí tienes el resumen que he sacado de la API de Wikipedia:\n\"{{ $('WIKI').item.json.extract }}\"\n\nREGLA ESTRICTA: Redacta una respuesta conversacional y fácil de leer basándote en esta información. Hazlo ÚNICA Y EXCLUSIVAMENTE en ESPAÑOL."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.ollama",
+      "typeVersion": 1,
+      "position": [
+        1504,
+        32
+      ],
+      "id": "0f10746c-46c1-4901-8a3d-e5571834fabb",
+      "name": "Mensaje Tema",
+      "credentials": {
+        "ollamaApi": {
+          "id": "dsyt7ZGR6Ro980lW",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "llama3:8b-instruct-q4_K_M",
+          "mode": "list",
+          "cachedResultName": "llama3:8b-instruct-q4_K_M"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Eres un comediante virtual muy gracioso. \nEl usuario te ha dicho: \"{{ $('Webhook').item.json.body.mensaje }}\"\n\nAquí tienes el chiste que he sacado de la API:\n{{ $('CHISTES').item.json.joke }}{{ $('CHISTES').item.json.setup }}\n{{ $('CHISTES').item.json.delivery }}\n\nREGLA ESTRICTA: Cuéntaselo al usuario de forma natural, añadiendo alguna risa o comentario simpático. ÚNICA Y EXCLUSIVAMENTE EN ESPAÑOL."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.ollama",
+      "typeVersion": 1,
+      "position": [
+        1648,
+        272
+      ],
+      "id": "181dee6e-ff0d-4b86-90b0-127ca955064c",
+      "name": "Mensaje Chiste",
+      "credentials": {
+        "ollamaApi": {
+          "id": "dsyt7ZGR6Ro980lW",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "deepseek-coder:33b",
+          "mode": "list",
+          "cachedResultName": "deepseek-coder:33b"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Eres un asistente que clasifica la intención de los mensajes de los usuarios.\nTu tarea es leer el mensaje del usuario y clasificarlo en UNA de estas 5 categorías:\n\n- CLIMA: Si pregunta por el tiempo, temperatura, lluvia, meteorología.\n- PAISES: Si pregunta por datos de un país, capitales, continentes, fronteras.\n- WIKI: Si pide saber qué es algo, un resumen de historia, biografías de famosos o conceptos.\n- CHISTE: Si pide que le cuentes un chiste o algo gracioso.\n- GENERAL: Si es un saludo (hola, buenos días), una despedida, o cualquier otra cosa que no encaje arriba.\n\nREGLA ESTRICTA: Tu respuesta debe ser ÚNICAMENTE la palabra en MAYÚSCULAS de la categoría. No añadas puntos, ni saludos, ni explicaciones. Solo la palabra exacta.\n\nMensaje del usuario a analizar:\n{{ $json.body.mensaje }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.ollama",
+      "typeVersion": 1,
+      "position": [
+        352,
+        0
+      ],
+      "id": "1464ac2a-80fc-48c9-b203-098c305704c9",
+      "name": "Clasificador",
       "credentials": {
         "ollamaApi": {
           "id": "dsyt7ZGR6Ro980lW",
@@ -1091,18 +1053,7 @@
       "main": [
         [
           {
-            "node": "Message a model",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Message a model": {
-      "main": [
-        [
-          {
-            "node": "Switch",
+            "node": "Clasificador",
             "type": "main",
             "index": 0
           }
@@ -1113,46 +1064,35 @@
       "main": [
         [
           {
-            "node": "Message a model1",
+            "node": "Filtro Ciudad",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Message a model8",
+            "node": "Filtro Pais",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Message a model7",
+            "node": "Filtro Tema",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Message a model9",
+            "node": "Filtro Chiste",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Message a model5",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Message a model1": {
-      "main": [
-        [
-          {
-            "node": "HTTP Request",
+            "node": "Default",
             "type": "main",
             "index": 0
           }
@@ -1170,33 +1110,11 @@
         ]
       ]
     },
-    "Message a model2": {
-      "main": [
-        [
-          {
-            "node": "Insert rows in a table1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Insert rows in a table1": {
       "main": [
         [
           {
             "node": "Respond to Webhook",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Message a model3": {
-      "main": [
-        [
-          {
-            "node": "Insert rows in a table2",
             "type": "main",
             "index": 0
           }
@@ -1214,17 +1132,6 @@
         ]
       ]
     },
-    "Message a model4": {
-      "main": [
-        [
-          {
-            "node": "Insert rows in a table3",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Insert rows in a table3": {
       "main": [
         [
@@ -1236,22 +1143,11 @@
         ]
       ]
     },
-    "Message a model5": {
-      "main": [
-        [
-          {
-            "node": "Insert rows in a table4",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "PAISES": {
       "main": [
         [
           {
-            "node": "Message a model2",
+            "node": "Mensaje Pais",
             "type": "main",
             "index": 0
           }
@@ -1262,7 +1158,7 @@
       "main": [
         [
           {
-            "node": "Message a model3",
+            "node": "Mensaje Tema",
             "type": "main",
             "index": 0
           }
@@ -1273,7 +1169,7 @@
       "main": [
         [
           {
-            "node": "Message a model4",
+            "node": "Mensaje Chiste",
             "type": "main",
             "index": 0
           }
@@ -1311,36 +1207,25 @@
       "main": [
         [
           {
-            "node": "Message a model6",
+            "node": "Mensaje Clima",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Message a model6": {
+    "Filtro Ciudad": {
       "main": [
         [
           {
-            "node": "Insert rows in a table",
+            "node": "HTTP Request",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Message a model7": {
-      "main": [
-        [
-          {
-            "node": "WIKI",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Message a model8": {
+    "Filtro Pais": {
       "main": [
         [
           {
@@ -1351,11 +1236,88 @@
         ]
       ]
     },
-    "Message a model9": {
+    "Filtro Tema": {
+      "main": [
+        [
+          {
+            "node": "WIKI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro Chiste": {
       "main": [
         [
           {
             "node": "CHISTES",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje Clima": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje Pais": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje Tema": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje Chiste": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clasificador": {
+      "main": [
+        [
+          {
+            "node": "Switch",
             "type": "main",
             "index": 0
           }
@@ -1369,7 +1331,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "74718528-866b-4c2f-b5f8-be249f7f71e3",
+  "versionId": "2196bde8-50c6-4553-a87c-20c983cde361",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "bd6692e73a58f0608389264cb218b1ff1a3c560ec94e1d21599f8c638e6247a7"
