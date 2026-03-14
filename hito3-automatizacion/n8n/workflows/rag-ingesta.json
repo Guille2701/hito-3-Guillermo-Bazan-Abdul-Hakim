@@ -60,6 +60,8 @@
     },
     {
       "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.text }}",
         "textSplittingMode": "custom",
         "options": {}
       },
@@ -122,7 +124,8 @@
           "mappingMode": "defineBelow",
           "value": {
             "nombre": "={{ $item(0).$node[\"Webhook\"].binary.data.fileName }}",
-            "num_chunks": "={{ $items().length }}"
+            "num_chunks": "={{ $items().length }}",
+            "ruta_archivo": "={{ $('Webhook').item.binary.data.fileName }}"
           },
           "matchingColumns": [
             "id"
@@ -303,6 +306,8 @@
     },
     {
       "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.text }}",
         "textSplittingMode": "custom",
         "options": {}
       },
@@ -365,7 +370,8 @@
           "mappingMode": "defineBelow",
           "value": {
             "nombre": "={{ $item(0).$node[\"Webhook\"].binary.data.fileName }}",
-            "num_chunks": "={{ $items().length }}"
+            "num_chunks": "={{ $items().length }}",
+            "ruta_archivo": "={{ $('Webhook').item.binary.data.fileName }}"
           },
           "matchingColumns": [
             "id"
@@ -588,7 +594,7 @@
     "executionOrder": "v1",
     "availableInMCP": false
   },
-  "versionId": "69eb86f3-0f3e-4eb0-bfb1-f061910d7b06",
+  "versionId": "44e4853f-5655-4e95-95aa-b85722180ba8",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "f3a872dce7a49585175aa952617c150558e095bcf3394dae36ee999bce25f73b"

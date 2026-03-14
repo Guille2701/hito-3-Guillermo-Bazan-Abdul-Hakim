@@ -3,6 +3,8 @@
 -- ==============================================================
 
 -- Tabla 1: Documentos procesados
+
+
 CREATE TABLE IF NOT EXISTS documentos ( 
     id SERIAL PRIMARY KEY, 
     nombre VARCHAR(255) NOT NULL, 
@@ -14,6 +16,7 @@ CREATE TABLE IF NOT EXISTS documentos (
 CREATE INDEX IF NOT EXISTS idx_documentos_nombre ON documentos(nombre);
 
 -- Tabla 2: Historial de consultas RAG
+
 CREATE TABLE IF NOT EXISTS consultas_rag ( 
     id SERIAL PRIMARY KEY, 
     pregunta TEXT NOT NULL, 
